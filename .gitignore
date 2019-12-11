@@ -1,0 +1,12 @@
+*.pyc
+lincoln/media/packages
+lincoln/logs/*.log
+lincoln/uploadedfiles
+arches.log
+*.sublime*
+lincoln/settings_local.py
+.DS_Store
+lincoln/tileserver/cache
+*.djcache
+lincoln/node_modules
+.vscode/
