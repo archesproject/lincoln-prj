@@ -10,3 +10,4 @@ lincoln/tileserver/cache
 *.djcache
 lincoln/node_modules
 .vscode/
+celerybeat-schedule
