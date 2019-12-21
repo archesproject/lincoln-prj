@@ -11,6 +11,8 @@ try:
 except ImportError:
     pass
 
+TIME_ZONE = "America/Los_Angeles"
+APP_NAME = "lincoln"
 APP_ROOT = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 STATICFILES_DIRS = (os.path.join(APP_ROOT, "media"),) + STATICFILES_DIRS
 
@@ -39,6 +41,8 @@ ELASTICSEARCH_CUSTOM_INDEXES = []
 #     'module': 'lincoln.search_indexes.sample_index.SampleIndex',
 #     'name': 'my_new_custom_index' <-- follow ES index naming rules
 # }]
+SEARCH_EXPORT_IMMEDIATE_DOWNLOAD_THRESHOLD = 2000  # The maximum number of instances a user can download from search export without celery
+SEARCH_EXPORT_LIMIT = 15000  # The maximum documents ElasticSearch will return in an export - **System Settings**
 
 LOAD_DEFAULT_ONTOLOGY = True
 LOAD_PACKAGE_ONTOLOGIES = True
@@ -131,7 +135,7 @@ CACHE_BY_USER = {"anonymous": 3600 * 24}
 MOBILE_OAUTH_CLIENT_ID = ""  #'9JCibwrWQ4hwuGn5fu2u1oRZSs9V6gK8Vu8hpRC4'
 MOBILE_DEFAULT_ONLINE_BASEMAP = {"default": "mapbox://styles/mapbox/streets-v9"}
 
-APP_TITLE = "Arches | Heritage Data Management"
+APP_TITLE = "Lincoln"
 COPYRIGHT_TEXT = "All Rights Reserved."
 COPYRIGHT_YEAR = "2019"
 
@@ -139,6 +143,13 @@ CELERY_BROKER_URL = "amqp://guest:guest@localhost"
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_RESULT_BACKEND = "django-db"  # Use 'django-cache' if you want to use your cache as your backend
 CELERY_TASK_SERIALIZER = "json"
+CELERY_SEARCH_EXPORT_EXPIRES = 60 * 3  # seconds
+CELERY_SEARCH_EXPORT_CHECK = 15  # seconds
+
+CELERY_BEAT_SCHEDULE = {
+    "delete-expired-search-export": {"task": "arches.app.tasks.delete_file", "schedule": CELERY_SEARCH_EXPORT_CHECK,},
+    "notification": {"task": "arches.app.tasks.message", "schedule": CELERY_SEARCH_EXPORT_CHECK, "args": ("Celery Beat is Running",),},
+}
 
 try:
     from .package_settings import *
